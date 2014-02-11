@@ -1,28 +1,31 @@
-Amazon Glacier File Backup
-==========================
+Go Configuration
+================
 
-Functionality
--------------
+```
+import (
 
-* accepts line delimited file paths from stdin
-* uploads to amazon glacier in 1gb tarball archives
-* cleans up after itself (each upload / archive is a go worker so we can manage memory overhead)
+  "github.com/jonmorehouse/go-config/config"
 
-Example
--------
+)
+
+func (Config config) Bootstrap() {
+
+  config.env("", DEFAULT)
+
+}
+
+func main() {
+
+  Config.Bootstrap()
+
+
+}
 
 ```
 
-  find . -type f | glaciar-ball
-
-```
-
-Output
-------
-
-* 01-30-2014-01.tgz
-* 01-30-2014-02.tgz
-* ...
+* creates a config singleton
+* implement your own bootstrap method on the interface
+  
 
 
 
