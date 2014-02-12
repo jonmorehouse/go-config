@@ -17,6 +17,7 @@ type Config struct {
 var internal Config 
 var initialized bool
 
+// private methods
 func bootstrap() {
 	
 	if initialized {
@@ -31,7 +32,43 @@ func bootstrap() {
 	internal = Config{elements: map[string]interface{}{}}
 }
 
+// getters 
+func First(args ...interface{}) interface{} {
 
+	return args[0]
+}
+
+func Value(key string) interface{} {
+
+	value, err := Get(key)
+
+	if err != nil {
+
+		return err
+
+	} else {
+
+		return value
+	}
+}
+
+func Get(key string) (interface{}, error) {
+
+	bootstrap()
+
+	value, ok := internal.elements[key]
+
+	if ok {
+
+		return value, nil
+
+	} else {
+
+		return nil, errors.New("invalid key")
+	}
+}
+
+// setters 
 func Set(key string, defaultValue interface{}) error {
 
 	bootstrap()
@@ -120,21 +157,6 @@ func Set(key string, defaultValue interface{}) error {
 	return returnError
 }
 
-func Get(key string) (interface{}, error) {
-
-	bootstrap()
-
-	value, ok := internal.elements[key]
-
-	if ok {
-
-		return value, nil
-
-	} else {
-
-		return nil, errors.New("invalid key")
-	}
-}
 
 func Bootstrap(keys []string) error {
 
@@ -170,5 +192,4 @@ func Bootstrap(keys []string) error {
 
 	return nil
 }
-
 

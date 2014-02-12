@@ -3,11 +3,10 @@ package config
 import (
 
 	"testing"
-	//"fmt"
+	"reflect"
 	. "launchpad.net/gocheck"
 	"os"
 	"strconv"
-
 )
 
 // bootstrap / setup go check suite
@@ -49,9 +48,31 @@ func (s *TestSuite) TestBootstrap(c *C) {
 
 	c.Assert(err, IsNil)
 
+	// now pass in an unset varaible and ensure we pass an error back
+	err = Bootstrap([]string{"NO_PORT"})
 
+	c.Assert(err, Not(Equals), nil)
 }
 
+func (s *TestSuite) TestFirst(c *C) {
 
+	// setup
+	testPort := 4432
+	Set("testPort", testPort)
 
+	// now lets grab the first element
+	result := First(Get("testPort"))
 
+	// ensure that we successfully got the 
+	c.Assert(testPort, Equals, result)
+}
+
+func (s *TestSuite) TestValue(c *C) {
+
+	Set("TEST_PORT", 4444)
+
+	// now lets get the value. Make sure we got the correct kind of result
+	value := Value("TEST_PORT")
+	c.Assert(value, Equals, 4444)
+	c.Assert(reflect.TypeOf(value).Name(), Equals, "int")
+}

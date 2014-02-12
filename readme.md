@@ -17,9 +17,10 @@ func main() {
   // convert to string/int as needed
   config.Bootstrap(["HOST", "PORT"])
 
-  config.Get("HOST").(string)
-  config.Get("PORT").(int)
-
+  value, err := config.Get("HOST").(string)
+  
+  // return just the integer value 
+  intValue := config.Value("PORT").(int)
 
 }
 ```
