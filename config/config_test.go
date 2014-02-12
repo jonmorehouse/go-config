@@ -4,25 +4,21 @@ import (
 
 	"testing"
 	"fmt"
+	"os"
 )
+
+func TestBootstrap(t *testing.T) {
+
+	// call the bootstrap function - this should set up the entire application
+	bootstrap()
+
+
+}
 
 func TestSet(t *testing.T) {
 
-	// now lets test the config attribute
-	result := Set("HOST", "go-test-host")
-	
-	if result != nil {
 
-		fmt.Println("FIAL")
-
-	} else {
-
-
-		fmt.Println(internal.elements["HOST"])
-
-	}
-	
-
+	fmt.Println(os.Getenv("PORT"))
 
 
 

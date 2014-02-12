@@ -4,6 +4,7 @@ import (
 
 	"errors"
 	"os"
+	"strconv"
 )
 
 type Config struct {
@@ -14,64 +15,124 @@ type Config struct {
 
 // this is the variable that will hold all of our elements as needed 
 var internal Config 
+var initialized bool
 
 func bootstrap() {
+	
+	if initialized {
 
-	// bootstrap our configuration environment
-	if internal == (Config{elements:}) {
-
-		//internal = new(config) 
-		internal.elements = make(map[string]interface{})
+		return
 	}
+
+	// set our global variable as needed
+	initialized = true
+
+	// now initailize our configuration container
+	internal = Config{elements: map[string]interface{}{}}
 }
+
 
 func Set(key string, defaultValue interface{}) error {
 
-	// lets check to make sure that we have a valid internal element?
-		
-	// initialize return variable
+	bootstrap()
+
+	// initialize a return error as needed
 	var returnError error
 
-	// grab the current element
-	element := internal.elements[key]
+	// first lets check and see if the key already exists
+	_, ok := internal.elements[key] // grab the element 
 
-	// now lets 
-	if element == nil {
+	// if the value exists
+	if ok {
 
-		// now lets get the environment variable
-		value := os.Getenv(key)
+		// the value already exists - lets not override it
+		return errors.New("Key already exists")
 
-		if value == "" && defaultValue == nil {
-
-			returnError = errors.New("Environment variable not found. No default passed")
-
-		} else if value == "" { // no variable found -- use default
-
-			// set the environment variable
-			internal.elements[key] = defaultValue
-
-			// now create an error to be returned
-			returnError = errors.New("Environment variable not found. Using default value")
-
-		} else { // we have a variable here to use!
-
-			internal.elements[key] = value
-		}
-
-	} else {
-
-		// this variable already exists - print something?
-		returnError = errors.New("Key exists")
 	}
 
-	// we passed - no need to return
+	// now lets handle actually grabbing the key per necessary
+	stringValue := os.Getenv(key)
+
+	// now lets determine the type of the defaultValue so we can cast as necessary
+	switch defaultValue.(type) {
+
+	case int:
+
+		// convert the output to integer
+		intValue, err := strconv.Atoi(stringValue) 
+
+		// if we have an issue converting the string or we have a 0 value
+		if err != nil || intValue == 0 {
+
+			// return the error passed
+			returnError = err
+
+			// used the default value
+			internal.elements[key] = defaultValue
+
+		} else { // if everything works then lets set this environment variable
+
+			internal.elements[key] = intValue
+		}
+		
+	case int64:
+
+		// convert the output to integer
+		intValue, err := strconv.Atoi(stringValue) 
+
+		// if we have an issue converting the string or we have a 0 value
+		if err != nil || intValue == 0 {
+
+			// return the error passed
+			returnError = err
+
+			// used the default value
+			internal.elements[key] = defaultValue
+
+		} else { // if everything works then lets set this environment variable
+
+			internal.elements[key] = int64(intValue)
+		}
+
+	case string:
+
+		// no value found
+		if stringValue == "" {
+
+			returnError = errors.New("Environment variable not found. Using default.")
+
+			// use the default value as the config value
+			internal.elements[key] = defaultValue
+
+		} else {
+
+			// now set the string variable as needed 
+			internal.elements[key] = stringValue
+		}
+
+	default: // just go ahead and use the normal type - cast as the defaultValue's type 
+
+		// would be nice to create a list dynamically as needed as well ...
+		// not sure how to handle this -- errors could be everywhere with casting to the default value's type ... 
+
+	}
+
 	return returnError
 }
 
 func Get(key string) (interface{}, error) {
 
-	// get the element as needed
-	return 55, nil
-}
+	bootstrap()
 
+	value, ok := internal.elements[key]
+
+	if ok {
+
+		return value, nil
+
+	} else {
+
+		return nil, errors.New("invalid key")
+	}
+}
 

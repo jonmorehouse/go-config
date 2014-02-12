@@ -1,0 +1,3 @@
+# load in current exports as needed
+# maybe we can improve this in the future?
+\. load_export_file .test.exports
