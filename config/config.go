@@ -136,3 +136,39 @@ func Get(key string) (interface{}, error) {
 	}
 }
 
+func Bootstrap(keys []string) error {
+
+	// bootstrap our configuration elements as needed
+	bootstrap() 
+
+	var value string
+
+	for i := range keys {
+		
+		value = os.Getenv(keys[i])
+
+		if value != "" {
+				
+			// attempt to convert to number ... 
+			intValue, ok := strconv.Atoi(value)
+
+			// we got a valid integer - lets save it
+			if ok == nil {
+
+				internal.elements[keys[i]] = intValue	
+
+			} else { // no integer we can safely store - use the string value
+
+				internal.elements[keys[i]] = value
+			}
+
+		} else { // key wasn't found. Lets find a way to pass it back as an error message
+
+			return errors.New(keys[i])
+		}
+	}
+
+	return nil
+}
+
+
