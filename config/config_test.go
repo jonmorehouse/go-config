@@ -3,11 +3,13 @@ package config
 import (
 
 	"testing"
-	"fmt"
 )
 
 func TestConfigAttributes(t *testing.T) {
 
+	// now lets test the config attribute
 
 }
+
+
 
