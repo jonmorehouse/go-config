@@ -1,40 +1,29 @@
 package config
 
 import (
-
 	"errors"
 	"os"
 	"strconv"
 )
 
 type Config struct {
-
-	// map all configuration elements to the variables as needed
 	elements map[string]interface{}
 }
 
 // this is the variable that will hold all of our elements as needed 
-var internal Config 
-var initialized bool
+var internal * Config 
 
 // private methods
-func bootstrap() {
-	
-	if initialized {
-
+func New() {
+	if internal != nil {
 		return
 	}
-
-	// set our global variable as needed
-	initialized = true
-
 	// now initailize our configuration container
-	internal = Config{elements: map[string]interface{}{}}
+	internal = &Config{elements: map[string]interface{}{}}
 }
 
 // getters 
 func First(args ...interface{}) interface{} {
-
 	return args[0]
 }
 
@@ -43,9 +32,7 @@ func Value(key string) interface{} {
 	value, err := Get(key)
 
 	if err != nil {
-
 		return err
-
 	} else {
 
 		return value
@@ -53,8 +40,6 @@ func Value(key string) interface{} {
 }
 
 func Get(key string) (interface{}, error) {
-
-	bootstrap()
 
 	value, ok := internal.elements[key]
 
@@ -70,8 +55,6 @@ func Get(key string) (interface{}, error) {
 
 // setters 
 func Set(key string, defaultValue interface{}) error {
-
-	bootstrap()
 
 	// initialize a return error as needed
 	var returnError error
@@ -159,9 +142,6 @@ func Set(key string, defaultValue interface{}) error {
 
 
 func Bootstrap(keys []string) error {
-
-	// bootstrap our configuration elements as needed
-	bootstrap() 
 
 	var value string
 
