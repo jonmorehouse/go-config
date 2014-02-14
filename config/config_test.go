@@ -27,6 +27,20 @@ func (s *TestSuite) TestSet(c *C) {
 	c.Assert(port, Equals, configPort.(int))
 }
 
+func (s *TestSuite) TestManualSet(c *C) {
+	value := []int{5,5,5,6}
+	// set the value
+	err := ManualSet("list", value)
+	c.Assert(err, IsNil)
+	// now grab the value as needed
+	grabValue := Value("list")
+	c.Assert(grabValue, Not(Equals), nil)
+	// make sure we got the correct list back
+	for i := range value {
+		c.Assert(value[i], Equals, grabValue.([]int)[i])
+	}
+}
+
 func (s *TestSuite) TestGet(c *C) {
 
 	value, err := Get("NULL_VALUE")

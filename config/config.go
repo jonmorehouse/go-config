@@ -54,6 +54,17 @@ func Get(key string) (interface{}, error) {
 }
 
 // setters 
+func ManualSet(key string, value interface{}) error {
+	// check if the key exists in the map already
+	_, found := internal.elements[key]
+	if found {
+		return errors.New("Duplicate key.")
+	} else {
+		internal.elements[key] = value
+		return nil
+	}
+}
+
 func Set(key string, defaultValue interface{}) error {
 
 	// initialize a return error as needed
