@@ -5,8 +5,6 @@ import (
 	"testing"
 	"reflect"
 	. "launchpad.net/gocheck"
-	"os"
-	"strconv"
 )
 
 // bootstrap / setup go check suite
@@ -20,17 +18,9 @@ func (s *TestSuite) SetUpTest(c *C) {
 }
 
 func (s *TestSuite) TestSet(c *C) {
-	port, _ := strconv.Atoi(os.Getenv("PORT"))
-	Set("PORT", port)
-	configPort, err := Get("PORT")
-	c.Assert(err, IsNil)
-	c.Assert(port, Equals, configPort.(int))
-}
-
-func (s *TestSuite) TestManualSet(c *C) {
 	value := []int{5,5,5,6}
 	// set the value
-	err := ManualSet("list", value)
+	err := Set("list", value)
 	c.Assert(err, IsNil)
 	// now grab the value as needed
 	grabValue := Value("list")
